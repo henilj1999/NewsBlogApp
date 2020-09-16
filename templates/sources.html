@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block main %}
+    <h1 style="text-align: center;">Sources</h1>
+    <div class="card-columns">
+    {% for source in sources %}
+    <div class="card h-400">
+        <div class="card-body">
+          <h5 class="card-title">{{source['name']}}</h5>
+          <p class="card-text">{{source['description']}}</p>
+          <p class="card-text">Category: {{source['category']}}</p>
+          <a href="{{source['url']}}" class="btn btn-info">Read More...</a>
+          <p class="card-text"><small class="text-muted">Country: {{source['country']}}, Language: {{source['language']}}</small></p>
+        </div>
+    </div>
+    {%endfor%}
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block main %}
+    <h1>Login</h1>
+    <hr>
+    <form action="/login" method="POST">
+        <div class="form-group">
+        	{{ render_field(form.email, class_='form-control') }}
+        </div>
+        <div class="form-group">
+        	{{ render_field(form.password, class_='form-control') }}
+        </div>      
+		<div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg">Login</button>
+        </div>
+    </form>
+
+{% endblock %}

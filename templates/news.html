@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block main %}
+    <h1 style="text-align: center;">{{topic.title()}}</h1>
+    {% if length == 0: %}
+    {% if page == 1: %}<h2 style="text-align: center;">Sorry, We are unable to find any news related to {{topic}} topic. </h2>
+    {% else: %}<h2 style="text-align: center;">Sorry, We are unable to find more news related to {{topic}} topic. </h2>
+    {% endif %}
+    {% endif %}
+    <div class="card-columns">
+    {% for article in articles %}
+    <div class="card h-400">
+        <img src="{{article['urlToImage']}}" class="card-img-top" alt="...">
+        <div class="card-body">
+          <h5 class="card-title">{{article['source']['name']}}: {{article['author']}}</h5>
+          <p class="card-text">{{article['title']}}</p>
+          <a href="{{article['url']}}" class="btn btn-info">Read More...</a>
+          <p class="card-text"><small class="text-muted">Published At: {{article['publishedAt']}}</small></p>
+        </div>
+    </div>
+    {%endfor%}
+    </div>
+
+    <nav aria-label="Page navigation example" style="margin-bottom: 10px;">
+      <ul class="pagination justify-content-center pagination-lg">
+        <li class="page-item {% if page == 1 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/1">1</a></li>
+          <li class="page-item {% if page == 2 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/2" >2</a></li>
+          <li class="page-item {% if page == 3 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/3">3</a></li>
+          <li class="page-item {% if page == 4 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/4">4</a></li>
+          <li class="page-item {% if page == 5 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/5">5</a></li>
+      </ul>
+    </nav>
+
+{% endblock %}
