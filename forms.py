@@ -18,9 +18,19 @@ class RegisterForm(Form):
 
 
 class LoginForm(Form):
-    email = StringField('Email')
-    password = PasswordField('Password')
+    email = StringField('Email', [
+        validators.Length(min = 10, max = 100, message='Length of email should be between 10 and 100'),
+    ])
+    password = PasswordField('Password', [
+        validators.Length(min = 8, max = 100, message='Length of password should be between 8 and 100')
+    ])
+
 
 class SearchForm(Form):
     search = StringField('Search')
     submit = SubmitField('Search')
+
+
+class ArticleForm(Form):
+    title = StringField('Title', validators=[validators.DataRequired()])
+    description = TextAreaField('Description', validators=[validators.DataRequired()])

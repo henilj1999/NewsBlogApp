@@ -1,6 +1,45 @@
 {% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
 
 {% block main %}
-    <h1>Dashboard</h1>
-    <h3>Welcome {{session.username}}</h3>
+    <h1 style="text-align: center;">Dashboard</h1>
+    
+
+      {% for article in articles: %}
+      <div class="card">
+        <div class="card-header" style="font-weight: bold;">
+          {{article.title}}
+        </div>
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p style="text-align: justify;">{{article.description}}</p>
+            <a href="/article/edit/{{article.id}}" class="btn btn-warning btn-sm" style="color: white;">Edit</a>
+            <a href="/article/delete/{{article.id}}" class="btn btn-danger btn-sm" style="color: white;">Delete</a>
+            <br>
+            <footer class="blockquote-footer">Published at: <cite title="Source Title">{{article.publishedAt}}</cite></footer>
+          </blockquote>
+        </div>
+      </div>
+      <hr>
+      {% endfor %}
+      
+
+      <p style="text-align: center;">
+        <button style="text-align: center;" class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addingArticle" aria-expanded="false" aria-controls="collapseExample">
+          Add Article
+        </button>
+      </p>
+      <div class="collapse" id="addingArticle">
+        <form action="/dashboard/add" method="POST">
+            <div class="form-group">
+                {{ render_field(articleForm.title, class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ render_field(articleForm.description, class_='form-control') }}
+            </div>      
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-sm">Add Article</button>
+            </div>
+        </form>
+      </div>
 {% endblock %}

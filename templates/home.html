@@ -1,5 +1,24 @@
 {% extends 'base.html' %}
 
 {% block main %}
-    <h1>Home Page</h1>
+<div class="jumbotron">
+    <h1 class="display-4">Hello {{ session.name}}!</h1>
+    <p class="lead">This is a simple web-based appication created to understand various functionality of flask, a python library.</p>
+    <hr class="my-4">
+    <p>
+        This web application aloows users to do following cool stuffs
+        <ul>
+            <li>Read latest news that are retrived using the news api by surfing the news tab from the navbar. (<a href = 'https://newsapi.org/'>news_api</a>)</li>
+            <li>View all the sources of our news from the source tab.</li>
+            <li>Create and edit private articles that will be displayed on your dashboard.</li>
+            <li>Create public blogs to provide personal information to other users.</li>
+        </ul>
+    </p>
+    {% if session.logged_in : %}
+    <a class="btn btn-primary btn-lg" href="/dashboard" role="button">Go to Dashboard</a>
+    {% else %}
+    <a class="btn btn-primary btn-lg" href="/register" role="button">Register</a>
+    <a class="btn btn-primary btn-lg" href="/login" role="button">Login</a>
+    {% endif %}
+  </div>
 {% endblock %}
