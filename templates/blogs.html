@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block main %}
+    <h1 style="text-align: center;">Blogs page</h1>
+    <div class="container", style="text-align: center;">
+    <a href = '/blog/add' class="btn btn-primary" style="text-align: center; margin-bottom: 10px;">Add a Blog</a>
+    {% for blog in blogs: %}
+    <br>
+    <div class="card mb-3" style="width: 75%; text-align: left; display: inline-block; margin-left: auto; margin-right: auto;">
+        <div class="row no-gutters">
+          <div class="col-md-12">
+            <div class="card-body">
+              <h5 class="card-title">{{ blog.title}}</h5>
+              <p class="card-text" style="text-align: justify;">{{ blog.description }}</p>
+              <p class="card-text" style="font-weight: bold;">Comments</p>
+              {% for comment in blog.comments %}
+              <div>
+                <span>{{comment.data}}   <small>-{{comment.user}}</small></span>
+                {% if cur_user ==  comment.user %}
+                <div>
+                <a href = '/comment/edit/{{blog._id}}/{{comment.id}}' class="btn btn-warning btn-sm" style="color: white;">Edit</a>
+                <a href = '/comment/delete/{{blog._id}}/{{comment.id}}' class="btn btn-danger btn-sm" style="color: white;">Delete</a>
+            </div>
+                {% endif %}
+                <br>
+            </div>
+              {% endfor %}
+              <form style="margin-top: 5px;" method="POST" action="/comment/add/{{blog._id}}">
+                  <div class="form-row">
+                  <div class="col-10">{{commentForm.data(class_="form-control")}}</div>
+                  <div>{{commentForm.submit(class_="form-control btn-primary")}}</div>
+                </div>
+              </form>
+              <p class="card-text"><small class="text-muted">Published At: {{ blog.publishedAt }}<br>Published By: {{ blog.publishedBy }}</small></p>
+              {% if cur_user ==  blog.publishedBy %}
+              <a href = '/blog/edit/{{blog._id}}' class="btn btn-warning btn-sm" style="color: white;">Edit</a>
+              <a href = '/blog/delete/{{blog._id}}' class="btn btn-danger btn-sm" style="color: white;">Delete</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+</div>
+{% endblock %}

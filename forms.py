@@ -1,4 +1,5 @@
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators, SubmitField, ValidationError
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators, SubmitField, ValidationError, FileField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 class RegisterForm(Form):
     name = StringField('Name', [
@@ -34,3 +35,13 @@ class SearchForm(Form):
 class ArticleForm(Form):
     title = StringField('Title', validators=[validators.DataRequired()])
     description = TextAreaField('Description', validators=[validators.DataRequired()])
+
+
+class BlogForm(Form):
+    title = StringField('Title', validators=[validators.DataRequired()])
+    description = TextAreaField('Description', validators=[validators.DataRequired()])
+    submit = SubmitField('Add')
+
+class CommentForm(Form):
+    data = StringField('Data', validators=[validators.DataRequired()])
+    submit = SubmitField('Add Comment')

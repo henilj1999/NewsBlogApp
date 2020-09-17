@@ -2,14 +2,14 @@
 {% from "_formhelpers.html" import render_field %}
 
 {% block main %}
-<h1>Edit Article</h1>
+<h1>Edit Blog</h1>
 <hr>
-<form action="/article/edit/{{id}}" method="POST">
+<form action="/blog/edit/{{id}}" method="POST">
     <div class="form-group">
-        {{ render_field(articleForm1.title, class_='form-control') }}
+        {{ render_field(blogForm.title, class_='form-control') }}
     </div>
     <div class="form-group">
-        {{ render_field(articleForm1.description, class_='form-control') }}
+        {{ render_field(blogForm.description, class_='form-control') }}
     </div>      
     <div class="form-group">
         <button type="submit" class="btn btn-primary btn-sm">Edit</button>

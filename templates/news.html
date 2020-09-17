@@ -8,9 +8,30 @@
     {% else: %}<h2 style="text-align: center;">Sorry, We are unable to find more news related to {{topic}} topic. </h2>
     {% endif %}
     {% endif %}
+
+    <div class="container">
+      <div class="row">
+        {% for article in articles %}
+        <div class="col-md-4" >
+          <div class="card mb-4 shadow-sm">
+            <div class="card">
+              <img src="{{article['urlToImage']}}" class="card-img-top" alt="...">
+              <div class="card-body">
+                <h5 class="card-title">{{article['source']['name']}}: {{article['author']}}</h5>
+                <p style = "text-align: justify;" class="card-text">{{article['title']}}</p>
+                <a href="{{article['url']}}" class="btn btn-info">Read More...</a>
+                <p class="card-text"><small class="text-muted">Published At: {{article['publishedAt']}}</small></p>
+              </div>
+          </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+<!--
     <div class="card-columns">
     {% for article in articles %}
-    <div class="card h-400">
+    <div class="card-body">
         <img src="{{article['urlToImage']}}" class="card-img-top" alt="...">
         <div class="card-body">
           <h5 class="card-title">{{article['source']['name']}}: {{article['author']}}</h5>
@@ -21,7 +42,7 @@
     </div>
     {%endfor%}
     </div>
-
+-->
     <nav aria-label="Page navigation example" style="margin-bottom: 10px;">
       <ul class="pagination justify-content-center pagination-lg">
         <li class="page-item {% if page == 1 %} active {% endif %}"><a class="page-link" href="/news/{{topic}}/1">1</a></li>

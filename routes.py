@@ -9,9 +9,12 @@ from newsapi import NewsApiClient
 import os
 from datetime import datetime
 import uuid
+from werkzeug.datastructures import CombinedMultiDict
+from werkzeug.utils import secure_filename
+from bson.objectid import ObjectId
 
 news_api_key = str(os.environ.get('NEWS_API_KEY'))
-
+WTF_CSRF_SECRET_KEY = 'a random string'
 
 
 @app.route('/')
@@ -151,6 +154,7 @@ def dashboard():
     user = session['username']
     data = mongo.db.user.find_one({'username' : user})
     articles = data['articles']
+    articles = sorted(articles, key = lambda i: i['publishedAt'], reverse=True)
     return render_template('dashboard.html', articles = articles, articleForm = articleForm)
 
 @app.route('/dashboard/add', methods = ['POST'])
@@ -213,3 +217,111 @@ def delete_article(id):
             break
     mongo.db.user.update({'username' : user}, {'$set':{'articles':articles}})
     return redirect(url_for('dashboard'))
+
+
+
+
+
+
+
+
+
+#Blogs
+
+@app.route('/blogs')
+@is_logged_in
+def blogs():
+    commentForm = CommentForm()
+    session['news'] = False
+    blogs = mongo.db.blogs.find({})
+    blogs = sorted(blogs, key = lambda i: i['publishedAt'], reverse=True)
+    return render_template('blogs.html', blogs = blogs, cur_user = session['username'], commentForm = commentForm)
+
+@app.route('/blog/add', methods = ['GET', 'POST'])
+@is_logged_in
+def add_blog():
+    session['news'] = False
+    form = BlogForm(CombinedMultiDict((request.files, request.form)))
+    if request.method == 'POST' and form.validate():
+        blog = {
+            'title' : form.title.data,
+            'description' : form.description.data,
+            'publishedAt' : str(datetime.utcnow()),
+            'publishedBy' : session['username'],
+            'comments' : []
+        }
+        mongo.db.blogs.insert(blog)
+        return redirect(url_for('blogs'))
+    return render_template('addblog.html', blogForm = form)
+
+
+@app.route('/comment/add/<id>', methods = ['POST'])
+@is_logged_in
+def add_comment(id):
+    form = CommentForm(request.form)
+    blog = mongo.db.blogs.find_one({'_id' : ObjectId(id)})
+    
+    comments = blog['comments']
+    comment = {
+        'id' : str(uuid.uuid1()),
+        'data' : form.data.data,
+        'user' : session['username']
+    }
+    comments.append(comment)
+    print(comments)
+    mongo.db.blogs.update({'_id' : ObjectId(id)}, {'$set':{'comments':comments}})
+    
+    return redirect(url_for('blogs'))
+
+@app.route('/comment/delete/<id>/<comment_id>')
+@is_logged_in
+def delete_comment(id, comment_id):
+    blog = mongo.db.blogs.find_one({'_id' : ObjectId(id)})
+    comments = blog['comments']
+    for comment in comments:
+        if comment['id'] == comment_id:
+            comments.remove(comment)
+            break
+    mongo.db.blogs.update({'_id' : ObjectId(id)}, {'$set':{'comments':comments}})
+    return redirect(url_for('blogs'))
+
+@app.route('/comment/edit/<id>/<comment_id>', methods = ['GET', 'POST'])
+@is_logged_in
+def edit_comment(id, comment_id):
+    form = CommentForm(request.form)
+    blog = mongo.db.blogs.find_one_or_404({'_id' : ObjectId(id)})
+    comments = blog['comments']
+    for comment in comments:
+        if comment['id'] == comment_id:
+            if request.method == 'POST':
+                comment['data'] = form.data.data
+                comment['publishedAt'] = datetime.utcnow()
+                mongo.db.blogs.update({'_id' : ObjectId(id)}, {'$set':{'comments':comments}})
+                return redirect(url_for('blogs'))
+            else:
+                form.data.data = comment['data']
+                return render_template('edit_comment.html', commentForm = form, id = id, comment_id = comment_id)
+    return redirect(url_for('blogs'))
+
+@app.route('/blog/delete/<id>')
+@is_logged_in
+def delete_blog(id):
+    mongo.db.blogs.delete_one({'_id' : ObjectId(id)})
+    return redirect(url_for('blogs'))
+
+@app.route('/blog/edit/<id>', methods = ['POST', 'GET'])
+@is_logged_in
+def edit_blog(id):
+    form = BlogForm(request.form)
+    if request.method == 'POST':
+        blog = mongo.db.blogs.find_one_or_404({'_id' : ObjectId(id)})
+        blog['title'] = form.title.data
+        blog['description'] = form.description.data
+        blog['publishedAt'] = str(datetime.utcnow()) 
+        mongo.db.blogs.find_one_and_replace({'_id' : ObjectId(id)}, blog)
+        return redirect(url_for('blogs'))
+    else:
+        blog = mongo.db.blogs.find_one_or_404({'_id' : ObjectId(id)})
+        form.title.data = blog['title']
+        form.description.data = blog['description']
+        return render_template('edit_blog.html', blogForm = form, id = id)

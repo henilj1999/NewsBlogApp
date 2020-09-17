@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% from "_formhelpers.html" import render_field %}
+
+{% block main %}
+    <h1>Add a new Blog</h1>
+    <hr>
+    <form action="/blog/add" method="POSt" enctype="multipart/form-data">
+        <div class="form-group">
+        	{{ render_field(blogForm.title, class_='form-control') }}
+        </div>
+        <div class="form-group">
+        	{{ render_field(blogForm.description, class_='form-control') }}
+        </div>  
+		<div class="form-group">
+            {{ blogForm.submit(class_='btn btn-primary') }}
+        </div>
+    </form>
+
+{% endblock %}
