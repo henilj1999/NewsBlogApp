@@ -40,6 +40,9 @@ def register():
         if mongo.db.user.find_one({'email' : email}):
             flash('This email has already been registered', 'danger')
             return render_template('register.html', form = form)
+        if mongo.db.user.find_one({'username' : username}):
+            flash('This username has already been registered', 'danger')
+            return render_template('register.html', form = form)
         mongo.db.user.insert({'name' : name, 'email' : email, 'username' : username, 'password' : password, 'articles' : articles})
         flash('You have successfully Registered. You can now login', 'success')
         return redirect(url_for('login'))

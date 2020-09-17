@@ -15,13 +15,14 @@
               <p class="card-text" style="font-weight: bold;">Comments</p>
               {% for comment in blog.comments %}
               <div>
-                <span>{{comment.data}}   <small>-{{comment.user}}</small></span>
+                <div>{{comment.data}}   <small>-{{comment.user}}</small></div>
+                
                 {% if cur_user ==  comment.user %}
-                <div>
                 <a href = '/comment/edit/{{blog._id}}/{{comment.id}}' class="btn btn-warning btn-sm" style="color: white;">Edit</a>
-                <a href = '/comment/delete/{{blog._id}}/{{comment.id}}' class="btn btn-danger btn-sm" style="color: white;">Delete</a>
-            </div>
                 {% endif %}
+                {% if cur_user == comment.user or cur_user == blog.publishedBy %}
+                <a href = '/comment/delete/{{blog._id}}/{{comment.id}}' class="btn btn-danger btn-sm" style="color: white;">Delete</a>
+                {% endif %}                
                 <br>
             </div>
               {% endfor %}
